@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  php:
+    image: php:7.4.2-apache
+    ports:
+      - 80:80
+    volumes:
+      - .:/var/www/html
+
+  composer:
+    image: composer:2
+    command: ["composer", "install"]
+    volumes:
+      - .:/app
+
+  mariadb:
+    image: mariadb:10.5.2
+    volumes:
+      - mariadb-volume:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+      MYSQL_ROOT_PASSWORD: "rootpwd"
+      MYSQL_USER: "testuser"
+      MYSQL_PASSWORD: "testpassword"
+      MYSQL_DATABASE: "testdb"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - "mariadb:db"
+    ports:
+      - 8081:80
+
+volumes:
+  mariadb-volume:
